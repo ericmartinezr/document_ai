@@ -17,7 +17,11 @@ You're an expert AI agentic system supervisor.
 """)
 
 
-# PDF AGENT PROMPT
+# EXTRACTOR AGENT PROMPT
+EXTRACTOR_AGENT_SYSTEM_PROMPT = SystemMessage(content="""
+You're an expert document reader.
+Your job is to extract the information required by the user
+""")
 
 # CSV AGENT PROMPT
 
