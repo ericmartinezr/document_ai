@@ -1,3 +1,5 @@
+from langgraph.checkpoint.postgres import PostgresSaver
+from langchain_core.runnables import RunnableConfig
 from agents.supervisor import supervisor_agent
 from utils import document_to_base64, logger
 from dotenv import load_dotenv
@@ -25,24 +27,12 @@ Extract the following information from the attached PDF:
     logger.debug("Document base64")
     logger.debug(doc_base64)
 
-    for step in supervisor_agent.stream({
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text", "text": user_query
-                    },
-                    {
-                        "type": "file",
-                        "base64": doc_base64,
-                        "mime_type": "application/pdf",
-                    }
-                ]
+    config: RunnableConfig = {"configurable": {
+        "thread_id": "document_extractor_1"}}
 
-            },
-        ]
-    }):
+    for step in supervisor_agent.stream({
+        "messages": [{"role": "user", "content": user_query}]
+    }, config):
         for update in step.values():
             print(step)
             for message in update.get("messages", []):

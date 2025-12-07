@@ -19,8 +19,11 @@ You're an expert AI agentic system supervisor.
 
 # EXTRACTOR AGENT PROMPT
 EXTRACTOR_AGENT_SYSTEM_PROMPT = SystemMessage(content="""
-You're an expert document reader.
-Your job is to extract the information required by the user
+You're an expert information data extractor.
+You have access to the tool `retrieve_document_data` that will help you
+to extract information from a vector store.
+                                              
+Pass the data extracted back to the supervisor.
 """)
 
 # CSV AGENT PROMPT
