@@ -17,23 +17,34 @@ Extract the following information from the attached PDF:
 - If there is no PDF attached return the following message: "I can't extract information, there's no PDF attached"
 
 """
-    pdf_base64 = document_to_base64(
+    # TODO: Esto no está funcionando
+    # asi que es mejor convertirlo a vector y guardarlo en PGVector
+    doc_base64 = document_to_base64(
         "Small Language Models are the Future of Agentic AI.pdf")
+
+    logger.debug("Document base64")
+    logger.debug(doc_base64)
 
     for step in supervisor_agent.stream({
         "messages": [
             {
                 "role": "user",
-                "content": user_query
-            },
-            {
-                "type": "file",
-                "base64": pdf_base64,
-                "mime_type": "application/pdf",
+                "content": [
+                    {
+                        "type": "text", "text": user_query
+                    },
+                    {
+                        "type": "file",
+                        "base64": doc_base64,
+                        "mime_type": "application/pdf",
+                    }
+                ]
+
             },
         ]
     }):
         for update in step.values():
+            print(step)
             for message in update.get("messages", []):
                 logger.debug(message)
 
@@ -41,6 +52,9 @@ Extract the following information from the attached PDF:
 if __name__ == "__main__":
     try:
         run()
+    except FileNotFoundError as e:
+        logger.error("File not found")
+        logger.error(e, exc_info=True)
     except Exception as e:
         logger.error("Error executing main")
         logger.error(e, exc_info=True)

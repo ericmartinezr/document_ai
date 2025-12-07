@@ -14,7 +14,7 @@ if not LOCAL:
 
 
 small_model = ChatOllama(
-    model=GPT_OSS_20B,
+    model=GPT_OSS,
     temperature=0.2,
     base_url="http://localhost:11434",
     validate_model_on_init=True,
