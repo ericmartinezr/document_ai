@@ -9,7 +9,7 @@ load_dotenv()
 
 def run():
     user_query = """
-Extract the title of each document in the store.
+Explain in simple words what is addernet using the document store.
 """
     config: RunnableConfig = {"configurable": {
         "thread_id": "document_extractor_1"}}

@@ -17,9 +17,10 @@ files_to_ingest = [
     if file.split('.')[-1] in allowed_exts]
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=512,
+    chunk_size=2000,
     chunk_overlap=200,
-    add_start_index=True
+    add_start_index=True,
+    separators=["\n\n", "\n"]
 )
 
 for file in files_to_ingest:
