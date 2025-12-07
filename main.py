@@ -1,7 +1,7 @@
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.runnables import RunnableConfig
 from agents.supervisor import supervisor_agent
-from utils import document_to_base64, logger
+from utils import logger
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,24 +9,8 @@ load_dotenv()
 
 def run():
     user_query = """
-Extract the following information from the attached PDF:
-
-- Name
-- Phone number
-- Address
-
-**Instructions**
-- If there is no PDF attached return the following message: "I can't extract information, there's no PDF attached"
-
+Extract the title of each document in the store.
 """
-    # TODO: Esto no está funcionando
-    # asi que es mejor convertirlo a vector y guardarlo en PGVector
-    doc_base64 = document_to_base64(
-        "Small Language Models are the Future of Agentic AI.pdf")
-
-    logger.debug("Document base64")
-    logger.debug(doc_base64)
-
     config: RunnableConfig = {"configurable": {
         "thread_id": "document_extractor_1"}}
 

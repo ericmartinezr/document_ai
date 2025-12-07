@@ -1,5 +1,5 @@
 from langchain.agents import create_agent
-from langchain.agents.structured_output import ProviderStrategy
+from langchain.agents.structured_output import ProviderStrategy, ToolStrategy
 from models import small_model
 from prompts import EXTRACTOR_AGENT_SYSTEM_PROMPT
 from schemas import DocumentData
@@ -9,5 +9,6 @@ extractor_agent = create_agent(
     small_model,
     tools=[retrieve_document_data],
     system_prompt=EXTRACTOR_AGENT_SYSTEM_PROMPT,
-    response_format=ProviderStrategy(DocumentData)
+    # https://github.com/langchain-ai/langchain/issues/34144#issuecomment-3596071389
+    response_format=ToolStrategy(DocumentData)
 )
