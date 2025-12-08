@@ -1,7 +1,9 @@
 from langchain.tools import tool
+from typing import Optional
 from schemas import DocumentData
 from agents.extractor import extractor_agent
 from agents.writer import writer_agent
+from agents.email import email_agent
 from utils import logger
 
 
@@ -29,19 +31,29 @@ def extract_information(request: str):
     return result["messages"][-1].content
 
 
-@tool
-def write_to_file(data: DocumentData):
+@tool(args_schema=DocumentData)
+def write_to_file(title: str, author: str, publish_date: str, summary: str):
     """
     Writes the information in DocumentData format to a CSV file.
 
     Use this when the user asks for the information to be saved.
 
-    Input: Data in DocumentData format to be written to a CSV file
-    (e.g., "{'title': 'Document 1', 'author': 'Author A', 'publication_date': '2023-01-01', 'summary': '...'}")
+    Parameters:
+    - title (str): Title of the document.
+    - author (str): Author of the document.
+    - publish_date (str): Publication date of the document.
+    - summary (str): Summary of the document.
     """
     logger.info("=" * 60)
     logger.info("write_to_file")
     logger.info("=" * 60)
+
+    data = f"""
+    Title: {title}
+    Author: {author}
+    Publish Date: {publish_date}
+    Summary: {summary}
+    """
 
     result = writer_agent.invoke(
         {"messages": [{"role": "user", "content": data}]})
@@ -53,7 +65,37 @@ def write_to_file(data: DocumentData):
     return result["messages"][-1].content
 
 
-@tool
-def send_email(to: str, subject: str, body: str) -> str:
-    """Agent that sends an email with the detail of the information extracted"""
-    return ""
+@tool(args_schema=DocumentData)
+def send_email(title: str, author: str, publish_date: str, summary: str, attachment_paths: Optional[list[str]] = None) -> str:
+    """
+    Sends an email with the provided details.
+
+    Use this when the user asks for the information to be emailed.
+
+    Parameters:
+    - title (str): Title of the document.
+    - author (str): Author of the document.
+    - publish_date (str): Publication date of the document.
+    - summary (str): Summary of the document.
+    - attachment_paths (list[str], optional): List of paths to the attachment files. (e.g., ["/path/to/report.csv"])
+    """
+    logger.info("=" * 60)
+    logger.info("send_email")
+    logger.info("=" * 60)
+
+    data = f"""
+    Title: {title}
+    Author: {author}
+    Publish Date: {publish_date}
+    Summary: {summary}
+    Attachment paths: {attachment_paths if attachment_paths else 'None'}
+    """
+
+    result = email_agent.invoke(
+        {"messages": [{"role": "user", "content": data}]})
+
+    logger.info("=" * 60)
+    logger.info("end send_email")
+    logger.info("=" * 60)
+
+    return result["messages"][-1].content

@@ -1,10 +1,16 @@
 import os
 import csv
+import smtplib
+from email.message import EmailMessage
+from typing import Optional
 from datetime import datetime
 from langchain.tools import tool
 from stores import document_store
 from utils import logger
 from consts import CSV_DIR
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 @tool
@@ -56,7 +62,7 @@ def write_csv(title: str, author: str, publish_date: str, summary: str) -> str:
     logger.info("=" * 60)
 
     try:
-        file_name = f"output_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        file_name = f"output_{datetime.now().strftime('%Y%m%d')}.csv"
         file_path = os.path.join(CSV_DIR, file_name)
         with open(file_path, mode='a', newline='') as file:
             writer = csv.writer(file)
@@ -75,3 +81,104 @@ def write_csv(title: str, author: str, publish_date: str, summary: str) -> str:
     logger.info("=" * 60)
 
     return confirmation_message
+
+
+@tool
+def send_email(to_email: str, from_email: str, subject: str, body: str, attachment_paths: Optional[list[str]] = None) -> str:
+    """
+    Sends an email with the provided details.
+
+    Parameters:
+    - to_email (str): Recipient email address.
+    - from_email (str): Sender email address.
+    - subject (str): Subject of the email.
+    - body (str): Body content of the email.
+    - attachment_path (list[str], optional): List of paths to the attachment files.
+
+    Returns:
+    - str: Confirmation message.
+    """
+    logger.info("=" * 60)
+    logger.info("send_email")
+    logger.info("=" * 60)
+
+    try:
+        smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+        port = int(os.getenv("SMTP_PORT", 587))
+        password = os.getenv("GOOGLE_APP_PWD")
+
+        # Create the EmailMessage object
+        msg = EmailMessage()
+        msg['Subject'] = subject
+        msg['From'] = from_email
+        msg['To'] = to_email
+
+        # Set the main text content
+        msg.set_content(body)
+
+        # 2. Handle Attachments
+        if attachment_paths:
+            logger.debug(
+                f"Preparing to attach {len(attachment_paths)} file(s)...")
+
+            for file_path in attachment_paths:
+                # Check if the file exists
+                if not os.path.exists(file_path):
+                    logger.error(
+                        f"Warning: File not found at path: {file_path}. Skipping attachment.")
+                    continue
+
+                # Determine the main type and subtype based on the file extension
+                import mimetypes
+                ctype, encoding = mimetypes.guess_type(file_path)
+
+                # Default to application/octet-stream if the type can't be guessed
+                if ctype is None or encoding is not None:
+                    ctype = 'application/octet-stream'
+
+                maintype, subtype = ctype.split('/', 1)
+
+                # Open the file in binary mode
+                with open(file_path, 'rb') as fp:
+                    # Attach the file
+                    msg.add_attachment(fp.read(),
+                                       maintype=maintype,
+                                       subtype=subtype,
+                                       filename=os.path.basename(file_path))
+
+                logger.debug(f"Attached: {os.path.basename(file_path)}")
+
+                # 3. Connect and Send
+                logger.debug(f"Connecting to {smtp_server}:{port}...")
+
+                with smtplib.SMTP(smtp_server, port) as server:
+                    server.starttls()  # Secure the connection
+                    server.login(from_email, password)
+                    logger.debug("Successfully logged in.")
+
+                    server.send_message(msg)
+                    logger.debug("Email sent successfully!")
+
+        confirmation_message = f"Email sent to {to_email} with subject '{subject}'"
+        if attachment_paths:
+            confirmation_message += f" and attachment '{attachment_paths}'"
+        logger.debug(confirmation_message)
+        return confirmation_message
+    except smtplib.SMTPAuthenticationError as e:
+        error_message = f"Failed to send email: {e}"
+        logger.error("Error: Authentication failed. Check your credentials.")
+        logger.error(e, exc_info=True)
+        return error_message
+    except Exception as e:
+        error_message = f"Failed to send email: {e}"
+        logger.error(error_message)
+        logger.error(e, exc_info=True)
+        return error_message
+    finally:
+        logger.info("=" * 60)
+        logger.info("end send_email")
+        logger.info("=" * 60)
+
+
+print(send_email('eric.martinez@live.cl', 'eric.martinezr@gmail.com', 'Test Email',
+      'This is a test email from the Document AI system.', ['/home/eric/document_ai/csv/output_20240610.csv']))

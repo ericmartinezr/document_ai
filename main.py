@@ -9,7 +9,8 @@ load_dotenv()
 
 def run():
     user_query = """
-Extract the most important information about addernet using the document store.
+Extract the dense features results from DINOv3. Get the author and the publish date from the papater. 
+After you have extracted the information, write them to a csv file and send an email with the detail.
 """
     config: RunnableConfig = {"configurable": {
         "thread_id": "document_extractor_1"}}
@@ -32,30 +33,6 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error("Error executing main")
         logger.error(e, exc_info=True)
-
-
-"""
-Agente que haga lo siguiente:
-
-- Reciba comandos por voz o texto  
-(VOZ NO ME FUNCIONA EN LOCAL, TENDRIA QUE SER ALGO EN LA NUBE Y ES TODO CARISIMO Y POR MES DAN COMO 5 HORAS :) )
-- Puede:
-1. Leer PDFs
-2. Escribir CSVs (excels)
-3. Enviar email
-
-
-Etnonces..
-
-El agente va a recibir un comando como por ejemplo :
-
-- "Extrae el contenido del PDF, guarda lo relevante en un CSV y envia un correo con el detalle"
-
-Obviamente va a haber un agente supervisor, la lectura y extraccion de PDF es un agente,
-la escritura del CSV es otro agente y el envio de correo tambien es otro agente.
-
-El envi ode email tiene que ser po Gmail o algo, algun servicio MCP
-"""
 
 
 # https://github.com/Uberi/speech_recognition/blob/master/examples/microphone_recognition.py
