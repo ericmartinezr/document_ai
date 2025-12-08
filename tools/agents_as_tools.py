@@ -1,5 +1,4 @@
 from langchain.tools import tool
-from typing import Optional
 from schemas import DocumentData
 from agents.extractor import extractor_agent
 from agents.writer import writer_agent
@@ -65,8 +64,8 @@ def write_to_file(title: str, author: str, publish_date: str, summary: str):
     return result["messages"][-1].content
 
 
-@tool(args_schema=DocumentData)
-def send_email(title: str, author: str, publish_date: str, summary: str, attachment_paths: Optional[list[str]] = None) -> str:
+@tool
+def email_to_user(title: str, author: str, publish_date: str, summary: str, attachment_paths: list[str]) -> str:
     """
     Sends an email with the provided details.
 
@@ -77,7 +76,7 @@ def send_email(title: str, author: str, publish_date: str, summary: str, attachm
     - author (str): Author of the document.
     - publish_date (str): Publication date of the document.
     - summary (str): Summary of the document.
-    - attachment_paths (list[str], optional): List of paths to the attachment files. (e.g., ["/path/to/report.csv"])
+    - attachment_paths (list[str]): List of paths to the attachment files. (e.g., ["/path/to/report.csv"])
     """
     logger.info("=" * 60)
     logger.info("send_email")

@@ -1,8 +1,8 @@
 import os
 import csv
 import smtplib
+from schemas import DocumentData
 from email.message import EmailMessage
-from typing import Optional
 from datetime import datetime
 from langchain.tools import tool
 from stores import document_store
@@ -43,7 +43,7 @@ def retrieve_document_data(query: str) -> str:
     return serialized
 
 
-@tool
+@tool(args_schema=DocumentData)
 def write_csv(title: str, author: str, publish_date: str, summary: str) -> str:
     """
     Writes the provided data to a CSV file.
@@ -84,7 +84,7 @@ def write_csv(title: str, author: str, publish_date: str, summary: str) -> str:
 
 
 @tool
-def send_email(to_email: str, from_email: str, subject: str, body: str, attachment_paths: Optional[list[str]] = None) -> str:
+def send_email(to_email: str, from_email: str, subject: str, body: str, attachment_paths: list[str]) -> str:
     """
     Sends an email with the provided details.
 
@@ -93,7 +93,7 @@ def send_email(to_email: str, from_email: str, subject: str, body: str, attachme
     - from_email (str): Sender email address.
     - subject (str): Subject of the email.
     - body (str): Body content of the email.
-    - attachment_path (list[str], optional): List of paths to the attachment files.
+    - attachment_paths (list[str]): List of paths to the attachment files.
 
     Returns:
     - str: Confirmation message.
@@ -123,6 +123,7 @@ def send_email(to_email: str, from_email: str, subject: str, body: str, attachme
 
             for file_path in attachment_paths:
                 # Check if the file exists
+                file_path = os.path.join(CSV_DIR, file_path)
                 if not os.path.exists(file_path):
                     logger.error(
                         f"Warning: File not found at path: {file_path}. Skipping attachment.")
@@ -148,16 +149,16 @@ def send_email(to_email: str, from_email: str, subject: str, body: str, attachme
 
                 logger.debug(f"Attached: {os.path.basename(file_path)}")
 
-                # 3. Connect and Send
-                logger.debug(f"Connecting to {smtp_server}:{port}...")
+        # Connect and Send
+        logger.debug(f"Connecting to {smtp_server}:{port}...")
 
-                with smtplib.SMTP(smtp_server, port) as server:
-                    server.starttls()  # Secure the connection
-                    server.login(from_email, password)
-                    logger.debug("Successfully logged in.")
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls()  # Secure the connection
+            server.login(from_email, password)
+            logger.debug("Successfully logged in.")
 
-                    server.send_message(msg)
-                    logger.debug("Email sent successfully!")
+            server.send_message(msg)
+            logger.debug("Email sent successfully!")
 
         confirmation_message = f"Email sent to {to_email} with subject '{subject}'"
         if attachment_paths:
@@ -178,7 +179,3 @@ def send_email(to_email: str, from_email: str, subject: str, body: str, attachme
         logger.info("=" * 60)
         logger.info("end send_email")
         logger.info("=" * 60)
-
-
-print(send_email('eric.martinez@live.cl', 'eric.martinezr@gmail.com', 'Test Email',
-      'This is a test email from the Document AI system.', ['/home/eric/document_ai/csv/output_20240610.csv']))
