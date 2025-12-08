@@ -9,7 +9,7 @@ load_dotenv()
 
 def run():
     user_query = """
-Explain in simple words what is addernet using the document store.
+Extract the most important information about addernet using the document store.
 """
     config: RunnableConfig = {"configurable": {
         "thread_id": "document_extractor_1"}}

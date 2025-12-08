@@ -16,7 +16,7 @@ def retrieve_document_data(query: str) -> str:
     """
     logger.debug(f"Retrieving document data for query: {query}")
 
-    docs = document_store.similarity_search(query, k=2)
+    docs = document_store.similarity_search(query, k=5)
     serialized = "\n\n".join(
         (f"Source: {doc.metadata}\nContent: {doc.page_content}")
         for doc in docs
