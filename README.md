@@ -1,6 +1,42 @@
-Install pyaudio
+# Document AI
+
+Small agentic app to extract information from documents (pdfs only so far), save a few fields to a csv file and then send the file and the detail to an email
+
+## Installation
 
 ```sh
-sudo apt-get install portaudio19-dev python3-pyaudio -y
-pip install pyaudio
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Initialization
+
+Initialize the database (PGVector)
+
+```sh
+python stores_init.py
+```
+
+Initialize the documents
+
+```sh
+python init/stores.py
+python init/documents.py
+```
+
+## Execution
+
+```sh
+python main.py
+```
+
+## TODO
+
+Check the following error when initializating DeepSeek PDF
+
+```
+sqlalchemy.exc.DataError: (psycopg.DataError) PostgreSQL text fields cannot contain NUL (0x00) bytes
+[SQL: INSERT INTO "public"."documents"("langchain_id", "content", "embedding", "langchain_metadata")VALUES (%(langchain_id)s, %(content)s, %(embedding)s, %(extra)s) ON CONFLICT ("langchain_id") DO UPDATE SET "content" = EXCLUDED."content", "embedding" = EXCLUDED."embedding", "langchain_metadata" = EXCLUDED."langchain_metadata";]
+[parameters: {'langchain_id': '50e5e4f4-d8d0-4f47-bf4d-9d73200fa5f9', 'content': 'mechanismretrieves only the key-value entries {c𝑠}corresponding to the top-k index scores.\nThen, the attention outputu 𝑡 is ...
 ```
