@@ -1,10 +1,13 @@
 from langchain.agents import create_agent
 from langchain.messages import SystemMessage
+from tools.tools import write_csv
 from models import small_model
-from prompts import SUPERVISOR_SYSTEM_PROMPT
+from prompts import WRITER_AGENT_SYSTEM_PROMPT
+from consts import DEV
 
-
-supervisor = create_agent(
+writer_agent = create_agent(
     small_model,
-    system_prompt=SystemMessage(content=SUPERVISOR_SYSTEM_PROMPT)
+    tools=[write_csv],
+    system_prompt=SystemMessage(content=WRITER_AGENT_SYSTEM_PROMPT),
+    debug=DEV
 )

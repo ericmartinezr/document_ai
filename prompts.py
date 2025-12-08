@@ -32,9 +32,21 @@ will retrieve the necessary document chunks to answer the request.
 - **DO NOT** attempt to answer user queries directly.
 - Use the appropriate tool to retrieve document data based on the user query.
 - Always provide a concise and relevant query to the tool to maximize the relevance of retrieved documents.
+- After extracting the document data and formatting, confirm that you followed the steps correctly.
 - If no documents are found, inform the supervisor accordingly.
+
+**Output Format:**
+- When responding use the DocumentData schema to structure your output.
 """
 
 # CSV AGENT PROMPT
+WRITER_AGENT_SYSTEM_PROMPT = """
+You're an expert CSV file writer.
+You have access to the tool `write_to_file` (arguments `data`) to write extracted information to a CSV file.
+
+**Instructions:**
+- Always use the `write_to_file` tool to write data to a CSV file.
+- Confirm that the data has been written successfully after using the tool.
+"""
 
 # EMAIL AGENT PROMPT

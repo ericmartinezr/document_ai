@@ -1,6 +1,8 @@
 from langchain.tools import tool
 from schemas import DocumentData
 from agents.extractor import extractor_agent
+from agents.writer import writer_agent
+from utils import logger
 
 
 @tool
@@ -13,16 +15,42 @@ def extract_information(request: str):
     Input: natural language request asking to extract information from the documents 
     (e.g., "Extract the titles of all documents", "Get me the authors and publication dates", etc.)
     """
+    logger.info("=" * 60)
+    logger.info("extract_information")
+    logger.info("=" * 60)
 
     result = extractor_agent.invoke(
         {"messages": [{"role": "user", "content": request}]})
+
+    logger.info("=" * 60)
+    logger.info("end extract_information")
+    logger.info("=" * 60)
+
     return result["messages"][-1].content
 
 
 @tool
 def write_to_file(data: DocumentData):
-    """Agent that writes the specified data to a csv file"""
-    return ""
+    """
+    Writes the information in DocumentData format to a CSV file.
+
+    Use this when the user asks for the information to be saved.
+
+    Input: Data in DocumentData format to be written to a CSV file
+    (e.g., "{'title': 'Document 1', 'author': 'Author A', 'publication_date': '2023-01-01', 'summary': '...'}")
+    """
+    logger.info("=" * 60)
+    logger.info("write_to_file")
+    logger.info("=" * 60)
+
+    result = writer_agent.invoke(
+        {"messages": [{"role": "user", "content": data}]})
+
+    logger.info("=" * 60)
+    logger.info("end write_to_file")
+    logger.info("=" * 60)
+
+    return result["messages"][-1].content
 
 
 @tool
