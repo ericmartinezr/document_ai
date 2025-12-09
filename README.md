@@ -49,6 +49,12 @@ python main.py
 
 Reference: https://docs.langchain.com/oss/python/langchain/test
 
+### Caching
+
+Investigate
+
+### Errors
+
 Check the following error when initializating DeepSeek PDF
 
 ```
