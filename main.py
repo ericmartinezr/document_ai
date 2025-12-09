@@ -33,12 +33,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error("Error executing main")
         logger.error(e, exc_info=True)
-
-
-# https://github.com/Uberi/speech_recognition/blob/master/examples/microphone_recognition.py
-
-# TODO: Testing
-# https://docs.langchain.com/oss/python/langchain/test
-
-# TODO: To attach documents
-# https://docs.langchain.com/oss/python/langchain/messages#standard-content-blocks
