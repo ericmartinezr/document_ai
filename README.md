@@ -10,6 +10,10 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Model
+
+- GPT OSS with Ollama
+
 ## Initialization
 
 ### Initialize the database (PGVector)
@@ -40,6 +44,10 @@ python main.py
 ```
 
 ## TODO
+
+### Testing
+
+Reference: https://docs.langchain.com/oss/python/langchain/test
 
 Check the following error when initializating DeepSeek PDF
 
