@@ -84,7 +84,7 @@ def write_csv(title: str, author: str, publish_date: str, summary: str) -> str:
 
 
 @tool
-def send_email(to_email: str, from_email: str, subject: str, body: str, attachment_paths: list[str]) -> str:
+def send_email(to_email: str, from_email: str, subject: str, body: str, attachment_files: list[str]) -> str:
     """
     Sends an email with the provided details.
 
@@ -117,11 +117,11 @@ def send_email(to_email: str, from_email: str, subject: str, body: str, attachme
         msg.set_content(body)
 
         # 2. Handle Attachments
-        if attachment_paths:
+        if attachment_files:
             logger.debug(
-                f"Preparing to attach {len(attachment_paths)} file(s)...")
+                f"Preparing to attach {len(attachment_files)} file(s)...")
 
-            for file_path in attachment_paths:
+            for file_path in attachment_files:
                 # Check if the file exists
                 file_path = os.path.join(CSV_DIR, file_path)
                 if not os.path.exists(file_path):
@@ -161,8 +161,8 @@ def send_email(to_email: str, from_email: str, subject: str, body: str, attachme
             logger.debug("Email sent successfully!")
 
         confirmation_message = f"Email sent to {to_email} with subject '{subject}'"
-        if attachment_paths:
-            confirmation_message += f" and attachment '{attachment_paths}'"
+        if attachment_files:
+            confirmation_message += f" and attachment '{attachment_files}'"
         logger.debug(confirmation_message)
         return confirmation_message
     except smtplib.SMTPAuthenticationError as e:
