@@ -1,10 +1,15 @@
-from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.runnables import RunnableConfig
+from langchain_redis import RedisCache
+from langchain_core.globals import set_llm_cache
 from agents.supervisor import supervisor_agent
 from utils import logger
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# TODO: See if I need to add TTL to cache entries
+redis_cache = RedisCache(redis_url="redis://localhost:6379")
+set_llm_cache(redis_cache)
 
 
 def run():
@@ -19,7 +24,6 @@ After you have extracted the information, write them to a csv file and send an e
         "messages": [{"role": "user", "content": user_query}]
     }, config):
         for update in step.values():
-            print(step)
             for message in update.get("messages", []):
                 logger.debug(message)
 
