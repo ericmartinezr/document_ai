@@ -48,6 +48,8 @@ python main.py
 
 ### Testing
 
+- Added a couple of tests based on [2]
+
 Reference:
 
 1. https://docs.langchain.com/oss/python/langchain/test
@@ -61,7 +63,8 @@ pytest --langsmith-output tests
 
 ### Caching
 
-Investigate
+- Added Redis Cache
+- Probably investigate more about (e.g., KV Cache, or is it redis enough?)
 
 ### Errors
 
