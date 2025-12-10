@@ -19,7 +19,6 @@ After you have extracted the information, write them to a csv file and send an e
         "messages": [{"role": "user", "content": user_query}]
     }, config):
         for update in step.values():
-            print(step)
             for message in update.get("messages", []):
                 logger.debug(message)
 
