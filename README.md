@@ -48,7 +48,16 @@ python main.py
 
 ### Testing
 
-Reference: https://docs.langchain.com/oss/python/langchain/test
+Reference:
+
+1. https://docs.langchain.com/oss/python/langchain/test
+2. https://docs.langchain.com/langsmith/test-react-agent-pytest
+
+#### Run tests
+
+```sh
+pytest --langsmith-output tests
+```
 
 ### Caching
 
